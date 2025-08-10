@@ -1,4 +1,4 @@
-import { MovieSummary } from "@/src/lib/api";
+import { MovieSummary } from "@/src/lib/api/types";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";

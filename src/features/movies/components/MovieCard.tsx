@@ -1,6 +1,6 @@
 import { MovieSummary } from "@/src/lib/api/types";
 import { Image } from "expo-image";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
@@ -11,7 +11,7 @@ type Props = {
   size?: "small" | "medium" | "large";
 };
 
-export const MovieCard = ({ movie, onPress, size = "medium" }: Props) => {
+const MovieCardComponent = ({ movie, onPress, size = "medium" }: Props) => {
   const [imageError, setImageError] = useState(false);
 
   const getCardDimensions = () => {
@@ -66,6 +66,16 @@ export const MovieCard = ({ movie, onPress, size = "medium" }: Props) => {
     </TouchableOpacity>
   );
 };
+
+function areEqual(prev: Props, next: Props) {
+  return (
+    prev.movie.imdbID === next.movie.imdbID &&
+    prev.size === next.size &&
+    prev.onPress === next.onPress
+  );
+}
+
+export const MovieCard = memo(MovieCardComponent, areEqual);
 
 const styles = StyleSheet.create({
   container: {

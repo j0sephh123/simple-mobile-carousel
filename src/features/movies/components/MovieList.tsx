@@ -1,5 +1,5 @@
 import { MovieSummary } from "@/src/lib/api/types";
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
@@ -14,21 +14,24 @@ interface MovieListProps {
   collectionKey?: string;
 }
 
-export const MovieList = ({
+export function MovieList({
   title,
   movies,
   onMoviePress,
   size = "medium",
   horizontal = true,
   collectionKey = "default",
-}: MovieListProps) => {
+}: MovieListProps) {
+  const renderMovie = useCallback(
+    ({ item }: { item: MovieSummary }) => (
+      <MovieCard movie={item} onPress={onMoviePress} size={size} />
+    ),
+    [onMoviePress, size]
+  );
+
   if (!movies || movies.length === 0) {
     return null;
   }
-
-  const renderMovie = ({ item }: { item: MovieSummary }) => (
-    <MovieCard movie={item} onPress={onMoviePress} size={size} />
-  );
 
   const keyExtractor = (item: MovieSummary) =>
     `${collectionKey}-${item.imdbID}`;
@@ -52,7 +55,7 @@ export const MovieList = ({
       />
     </ThemedView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
