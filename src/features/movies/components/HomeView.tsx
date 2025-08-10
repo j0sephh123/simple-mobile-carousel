@@ -1,4 +1,4 @@
-import { Movie } from "@/src/lib/api/types";
+import { MovieSummary } from "@/src/lib/api/types";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,14 +7,16 @@ import { HomeHeader } from "./HomeHeader";
 import { MovieRow } from "./MovieRow";
 
 interface HomeViewProps {
-  trending: Movie[];
-  popular: Movie[];
+  featured: MovieSummary[];
+  trending: MovieSummary[];
+  popular: MovieSummary[];
   refreshing: boolean;
   onRefresh: () => void;
-  onMoviePress: (movie: Movie) => void;
+  onMoviePress: (movie: MovieSummary) => void;
 }
 
 export function HomeView({
+  featured,
   trending,
   popular,
   refreshing,
@@ -37,28 +39,19 @@ export function HomeView({
       }
     >
       <HomeHeader />
-
-      {trending.length > 0 && (
-        <HeroCarousel movies={trending.slice(0, 6)} onPress={onMoviePress} />
-      )}
-
-      {trending.length > 0 && (
-        <MovieRow
-          title="Trending Now"
-          movies={trending.slice(0, 10)}
-          onPress={onMoviePress}
-          size="large"
-        />
-      )}
-
-      {popular.length > 0 && (
-        <MovieRow
-          title="Popular Movies"
-          movies={popular.slice(0, 10)}
-          onPress={onMoviePress}
-          size="medium"
-        />
-      )}
+      <HeroCarousel movies={featured} onPress={onMoviePress} />
+      <MovieRow
+        title="Trending Now"
+        movies={trending}
+        onPress={onMoviePress}
+        size="large"
+      />
+      <MovieRow
+        title="Popular Movies"
+        movies={popular}
+        onPress={onMoviePress}
+        size="medium"
+      />
     </ScrollView>
   );
 }

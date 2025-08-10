@@ -1,4 +1,4 @@
-import { Movie } from "@/src/lib/api";
+import { MovieSummary } from "@/src/lib/api";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
@@ -6,8 +6,8 @@ import { MovieList } from "./MovieList";
 
 type Props = {
   title: string;
-  movies: Movie[];
-  onPress: (movie: Movie) => void;
+  movies: MovieSummary[];
+  onPress: (movie: MovieSummary) => void;
   size?: "medium" | "large";
 };
 

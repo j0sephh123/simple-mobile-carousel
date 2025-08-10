@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { NotFoundState } from "../features/common";
+import { NotFoundState } from "@/src/ui/states";
 
 export default function NotFoundScreen() {
   return (

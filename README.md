@@ -20,7 +20,4 @@ A React Native app that showcases movies using the OMDB API.
 
 ## Features
 
-- Browse trending movies
-- View movie details
-- Search for movies
-- Responsive design with dark mode support
+to write

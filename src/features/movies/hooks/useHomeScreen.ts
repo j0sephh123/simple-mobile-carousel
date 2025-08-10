@@ -1,16 +1,28 @@
-import { Movie } from "@/src/lib/api";
-import { useRouter } from "expo-router";
-import { usePopularMoviesQuery, useTrendingMoviesQuery } from "./useMovies";
-import { useRefresh } from "../../../hooks/api/useRefresh";
 import { determineQueryStatus } from "@/src/hooks/api/useQueryStatus";
+import { type MovieSummary } from "@/src/lib/api/types";
+import { useRouter } from "expo-router";
+import { useRefresh } from "../../../hooks/api/useRefresh";
+import {
+  useFeaturedMoviesQuery,
+  usePopularMoviesQuery,
+  useTrendingMoviesQuery,
+} from "./useMovies";
 
 export type HomeScreenData = {
-  trending: Movie[];
-  popular: Movie[];
+  featured: MovieSummary[];
+  trending: MovieSummary[];
+  popular: MovieSummary[];
 };
 
 export function useHomeScreen() {
   const router = useRouter();
+
+  const {
+    data: featuredMovies,
+    isLoading: featuredLoading,
+    error: featuredError,
+    refetch: refetchFeatured,
+  } = useFeaturedMoviesQuery();
 
   const {
     data: trendingMovies,
@@ -27,14 +39,15 @@ export function useHomeScreen() {
   } = usePopularMoviesQuery();
 
   const { refreshing, handleRefresh } = useRefresh(async () => {
-    await Promise.all([refetchTrending(), refetchPopular()]);
+    await Promise.all([refetchFeatured(), refetchTrending(), refetchPopular()]);
   });
 
-  const handleMoviePress = (movie: Movie) => {
+  const handleMoviePress = (movie: MovieSummary) => {
     router.push(`/(stack)/movie/${movie.imdbID}`);
   };
 
   const status = determineQueryStatus([
+    { isLoading: featuredLoading, error: featuredError, data: featuredMovies },
     { isLoading: trendingLoading, error: trendingError, data: trendingMovies },
     { isLoading: popularLoading, error: popularError, data: popularMovies },
   ]);
@@ -42,8 +55,9 @@ export function useHomeScreen() {
   const data: HomeScreenData | undefined =
     status === "success"
       ? {
-          trending: trendingMovies || [],
-          popular: popularMovies || [],
+          featured: (featuredMovies as MovieSummary[]) || [],
+          trending: (trendingMovies as MovieSummary[]) || [],
+          popular: (popularMovies as MovieSummary[]) || [],
         }
       : undefined;
 

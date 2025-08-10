@@ -1,14 +1,14 @@
+import { MovieSummary } from "@/src/lib/api";
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
 import { MovieCard } from "./MovieCard";
-import { Movie } from "@/src/lib/api";
 
 interface MovieListProps {
   title?: string;
-  movies: Movie[];
-  onMoviePress: (movie: Movie) => void;
+  movies: MovieSummary[];
+  onMoviePress: (movie: MovieSummary) => void;
   size?: "small" | "medium" | "large";
   horizontal?: boolean;
 }
@@ -24,11 +24,11 @@ export const MovieList = ({
     return null;
   }
 
-  const renderMovie = ({ item }: { item: Movie }) => (
+  const renderMovie = ({ item }: { item: MovieSummary }) => (
     <MovieCard movie={item} onPress={onMoviePress} size={size} />
   );
 
-  const keyExtractor = (item: Movie) => item.imdbID;
+  const keyExtractor = (item: MovieSummary) => `${item.Title}-${item.Year}`;
 
   return (
     <ThemedView style={styles.container}>

@@ -18,15 +18,15 @@ export function MovieHero({
   Runtime,
   Rated,
 }: Props) {
-  const src =
-    Poster !== "N/A" ? { uri: Poster } : require("@/assets/images/icon.png");
+  const hasPoster = Poster && Poster !== "N/A";
+  const src = hasPoster ? { uri: Poster } : require("@/assets/images/icon.png");
 
   const meta = [Year, Runtime, Rated]
     .filter((v) => v && v !== "N/A")
     .join(" • ");
 
   return (
-    <PosterHero source={src}>
+    <PosterHero source={src} hasPoster={hasPoster}>
       <ThemedText style={styles.title}>{Title}</ThemedText>
       <ThemedText style={styles.meta}>{meta}</ThemedText>
       <RatingBadge rating={imdbRating} />

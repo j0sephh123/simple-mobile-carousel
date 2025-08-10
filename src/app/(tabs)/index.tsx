@@ -1,14 +1,14 @@
 import {
-  QueryState,
   EmptyState,
   ErrorState,
   LoadingState,
   OfflineState,
+  QueryState,
 } from "@/src/ui/states";
 import { HomeView } from "../../features/movies/components/HomeView";
 import {
-  useHomeScreen,
   HomeScreenData,
+  useHomeScreen,
 } from "../../features/movies/hooks/useHomeScreen";
 
 export default function HomeScreen() {
@@ -29,8 +29,9 @@ export default function HomeScreen() {
           />
         ),
         error: <ErrorState />,
-        success: ({ trending, popular }) => (
+        success: ({ featured, trending, popular }) => (
           <HomeView
+            featured={featured}
             trending={trending}
             popular={popular}
             refreshing={refreshing}

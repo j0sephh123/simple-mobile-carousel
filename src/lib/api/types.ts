@@ -27,8 +27,6 @@ export interface MovieDetail extends Movie {
   Response: "True" | "False";
 }
 
-export type CollectionKey = "popularClassics" | "sciFi" | "nolan" | "crime";
-
 export interface SearchResponse {
   Search?: Movie[];
   totalResults?: string;
@@ -36,7 +34,10 @@ export interface SearchResponse {
   Error?: string;
 }
 
-export interface APIError {
-  Response: "False";
-  Error: string;
-}
+export type MovieSummary = {
+  Title: string;
+  Year: string;
+  imdbID: string;
+  Type: string;
+  Poster: string;
+};
