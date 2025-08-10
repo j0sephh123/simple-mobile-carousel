@@ -1,7 +1,7 @@
-import { QueryStatus } from "@/src/ui/states/QueryState";
 import { isNetworkError } from "@/src/lib/utils";
+import { QueryStatus } from "@/src/ui/states/QueryState";
 
-type QueryState<TData = unknown, TError = Error> = {
+export type QueryState<TData = unknown, TError = Error> = {
   isLoading: boolean;
   error: TError | null;
   data: TData | undefined;

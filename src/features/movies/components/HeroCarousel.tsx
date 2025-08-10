@@ -97,11 +97,13 @@ export function HeroCarousel({ movies, onPress }: Props) {
           const index = Math.round(e.nativeEvent.contentOffset.x / width);
           setCurrentMovie(uniqueMovies[index] || null);
         }}
+        testID="hero-flatlist" 
       />
       <View style={styles.indicatorContainer} pointerEvents="none">
         {uniqueMovies.map(({ imdbID }) => (
           <View
             key={`hero-indicator-${imdbID}`}
+            testID="hero-indicator"
             style={[
               styles.indicator,
               { opacity: currentMovie?.imdbID === imdbID ? 1 : 0.4 },
