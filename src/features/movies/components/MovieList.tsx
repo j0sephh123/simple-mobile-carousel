@@ -11,6 +11,7 @@ interface MovieListProps {
   onMoviePress: (movie: MovieSummary) => void;
   size?: "small" | "medium" | "large";
   horizontal?: boolean;
+  collectionKey?: string;
 }
 
 export const MovieList = ({
@@ -19,6 +20,7 @@ export const MovieList = ({
   onMoviePress,
   size = "medium",
   horizontal = true,
+  collectionKey = "default",
 }: MovieListProps) => {
   if (!movies || movies.length === 0) {
     return null;
@@ -28,7 +30,8 @@ export const MovieList = ({
     <MovieCard movie={item} onPress={onMoviePress} size={size} />
   );
 
-  const keyExtractor = (item: MovieSummary) => item.imdbID;
+  const keyExtractor = (item: MovieSummary) =>
+    `${collectionKey}-${item.imdbID}`;
 
   return (
     <ThemedView style={styles.container}>
@@ -54,7 +57,7 @@ export const MovieList = ({
 const styles = StyleSheet.create({
   container: {
     marginTop: 8,
-    marginBottom: 2,
+    marginBottom: 0,
   },
   title: {
     fontSize: 18,

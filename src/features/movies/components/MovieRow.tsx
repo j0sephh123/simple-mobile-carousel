@@ -9,9 +9,16 @@ type Props = {
   movies: MovieSummary[];
   onPress: (movie: MovieSummary) => void;
   size?: "medium" | "large";
+  collectionKey?: string;
 };
 
-export function MovieRow({ title, movies, onPress, size = "medium" }: Props) {
+export function MovieRow({
+  title,
+  movies,
+  onPress,
+  size = "medium",
+  collectionKey,
+}: Props) {
   if (!movies || movies.length === 0) return null;
 
   return (
@@ -19,7 +26,12 @@ export function MovieRow({ title, movies, onPress, size = "medium" }: Props) {
       <ThemedText style={styles.title} type="subheading">
         {title}
       </ThemedText>
-      <MovieList movies={movies} onMoviePress={onPress} size={size} />
+      <MovieList
+        movies={movies}
+        onMoviePress={onPress}
+        size={size}
+        collectionKey={collectionKey}
+      />
     </View>
   );
 }

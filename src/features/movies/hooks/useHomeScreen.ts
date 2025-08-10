@@ -52,12 +52,42 @@ export function useHomeScreen() {
     { isLoading: popularLoading, error: popularError, data: popularMovies },
   ]);
 
+  function dedupeMoviesById(movies: MovieSummary[]): MovieSummary[] {
+    const seen = new Set<string>();
+    const result: MovieSummary[] = [];
+    for (const movie of movies) {
+      if (!seen.has(movie.imdbID)) {
+        seen.add(movie.imdbID);
+        result.push(movie);
+      }
+    }
+    return result;
+  }
+
+  const featuredUnique = dedupeMoviesById(featuredMovies ?? []);
+  const trendingUnique = dedupeMoviesById(trendingMovies ?? []);
+  const popularUnique = dedupeMoviesById(popularMovies ?? []);
+
+  const trendingFiltered = trendingUnique.filter(
+    (movie) => !featuredUnique.some((f) => f.imdbID === movie.imdbID)
+  );
+
+  const popularFiltered = popularUnique.filter((movie) => {
+    const isInFeatured = featuredUnique.some((f) => f.imdbID === movie.imdbID);
+    const isInTrending = trendingFiltered.some(
+      (t) => t.imdbID === movie.imdbID
+    );
+    return !isInFeatured && !isInTrending;
+  });
+
+  console.log({ popularFiltered });
+
   const data: HomeScreenData | undefined =
     status === "success"
       ? {
-          featured: featuredMovies ?? [],
-          trending: trendingMovies ?? [],
-          popular: popularMovies ?? [],
+          featured: featuredUnique,
+          trending: trendingFiltered,
+          popular: popularFiltered,
         }
       : undefined;
 

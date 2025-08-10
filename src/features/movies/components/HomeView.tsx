@@ -1,6 +1,6 @@
 import { MovieSummary } from "@/src/lib/api/types";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import { Platform, RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HeroCarousel } from "./HeroCarousel";
 import { HomeHeader } from "./HomeHeader";
@@ -31,7 +31,8 @@ export function HomeView({
       style={styles.container}
       contentContainerStyle={{
         paddingTop: insets.top + 28,
-        paddingBottom: insets.bottom + tabBarHeight + 8,
+        paddingBottom:
+          Platform.OS === "ios" ? insets.bottom + tabBarHeight : insets.bottom,
       }}
       showsVerticalScrollIndicator={false}
       refreshControl={
@@ -45,12 +46,14 @@ export function HomeView({
         movies={trending}
         onPress={onMoviePress}
         size="large"
+        collectionKey="trending"
       />
       <MovieRow
         title="Popular Movies"
         movies={popular}
         onPress={onMoviePress}
         size="medium"
+        collectionKey="popular"
       />
     </ScrollView>
   );

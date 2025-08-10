@@ -1,7 +1,7 @@
 import { MovieSummary } from "@/src/lib/api/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
-import { PlaceholderImage } from "./PlaceholderImage";
 
 const { width } = Dimensions.get("window");
 const HERO_HEIGHT = Math.min(520, Math.round(width * 1.1));
@@ -26,6 +25,18 @@ export function HeroCarousel({ movies, onPress }: Props) {
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [currentMovie, setCurrentMovie] = useState<MovieSummary | null>(null);
 
+  const uniqueMovies = useMemo(() => {
+    const seen = new Set<string>();
+    const result: MovieSummary[] = [];
+    for (const movie of movies) {
+      if (!seen.has(movie.imdbID)) {
+        seen.add(movie.imdbID);
+        result.push(movie);
+      }
+    }
+    return result;
+  }, [movies]);
+
   const handleImageError = (imdbId: string) => {
     setImageErrors((prev) => new Set(prev).add(imdbId));
   };
@@ -37,17 +48,17 @@ export function HeroCarousel({ movies, onPress }: Props) {
     return (
       <TouchableOpacity activeOpacity={0.85} onPress={() => onPress(item)}>
         <View style={styles.heroItem}>
-          {hasPoster ? (
-            <Image
-              source={{ uri: item.Poster }}
-              style={styles.heroImage}
-              contentFit="cover"
-              transition={250}
-              onError={() => handleImageError(item.imdbID)}
-            />
-          ) : (
-            <PlaceholderImage movie={item} />
-          )}
+          <Image
+            source={
+              hasPoster
+                ? { uri: item.Poster }
+                : require("@/assets/images/react-logo.png")
+            }
+            style={styles.heroImage}
+            contentFit="cover"
+            transition={250}
+            onError={() => handleImageError(item.imdbID)}
+          />
           <LinearGradient
             colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)"]}
             style={styles.gradient}
@@ -73,10 +84,10 @@ export function HeroCarousel({ movies, onPress }: Props) {
     <View>
       <FlatList
         ref={listRef}
-        data={movies}
+        data={uniqueMovies}
         horizontal
         pagingEnabled
-        keyExtractor={({ imdbID }) => imdbID}
+        keyExtractor={({ imdbID }) => `hero-${imdbID}`}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         snapToAlignment="center"
@@ -84,13 +95,13 @@ export function HeroCarousel({ movies, onPress }: Props) {
         contentContainerStyle={styles.listContent}
         onMomentumScrollEnd={(e) => {
           const index = Math.round(e.nativeEvent.contentOffset.x / width);
-          setCurrentMovie(movies[index] || null);
+          setCurrentMovie(uniqueMovies[index] || null);
         }}
       />
       <View style={styles.indicatorContainer} pointerEvents="none">
-        {movies.map(({ imdbID }) => (
+        {uniqueMovies.map(({ imdbID }) => (
           <View
-            key={imdbID}
+            key={`hero-indicator-${imdbID}`}
             style={[
               styles.indicator,
               { opacity: currentMovie?.imdbID === imdbID ? 1 : 0.4 },
@@ -104,8 +115,8 @@ export function HeroCarousel({ movies, onPress }: Props) {
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingBottom: 12,
-    marginBottom: 8,
+    paddingBottom: 8,
+    marginBottom: 4,
   },
   heroItem: {
     width,

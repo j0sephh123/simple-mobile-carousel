@@ -1,7 +1,7 @@
-import { MovieSummary } from "@/src/lib/api";
+import { MovieSummary } from "@/src/lib/api/types";
 import { Image } from "expo-image";
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
 
@@ -41,28 +41,20 @@ export const MovieCard = ({ movie, onPress, size = "medium" }: Props) => {
       onPress={() => onPress(movie)}
       activeOpacity={0.7}
     >
-      {hasPoster ? (
-        <Image
-          source={{ uri: movie.Poster }}
-          style={[
-            styles.poster,
-            { width: dimensions.width, height: dimensions.height * 0.7 },
-          ]}
-          contentFit="cover"
-          placeholder={require("@/assets/images/icon.png")}
-          transition={200}
-          onError={handleImageError}
-        />
-      ) : (
-        <View style={styles.fallbackBackground}>
-          <View style={styles.fallbackIcon}>
-            <ThemedText style={styles.fallbackIconText}>🎬</ThemedText>
-          </View>
-          <ThemedText style={styles.fallbackText} type="bodyMedium">
-            {movie.Title}
-          </ThemedText>
-        </View>
-      )}
+      <Image
+        source={
+          hasPoster
+            ? { uri: movie.Poster }
+            : require("@/assets/images/react-logo.png")
+        }
+        style={[
+          styles.poster,
+          { width: dimensions.width, height: dimensions.height * 0.7 },
+        ]}
+        contentFit="cover"
+        transition={200}
+        onError={handleImageError}
+      />
       <ThemedView style={styles.infoContainer}>
         <ThemedText style={styles.title} numberOfLines={2} type="bodyMedium">
           {movie.Title}
@@ -79,7 +71,6 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 6,
     borderRadius: 12,
-    overflow: "hidden",
     backgroundColor: "transparent",
     shadowColor: "#000",
     shadowOffset: {
@@ -103,7 +94,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     paddingHorizontal: 6,
-    paddingVertical: 8,
+    paddingVertical: 6,
     backgroundColor: "transparent",
   },
   title: {
@@ -115,32 +106,9 @@ const styles = StyleSheet.create({
   },
   year: {
     fontSize: 11,
+    lineHeight: 14,
     opacity: 0.9,
     fontFamily: "Inter-Regular",
     color: "#FFFFFF",
-  },
-  fallbackBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: "70%",
-    backgroundColor: "#2a2a2a",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
-    borderRadius: 8,
-  },
-  fallbackIcon: {
-    marginBottom: 8,
-  },
-  fallbackIconText: {
-    fontSize: 24,
-  },
-  fallbackText: {
-    textAlign: "center",
-    color: "#ffffff",
-    fontSize: 10,
-    lineHeight: 12,
   },
 });
