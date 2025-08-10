@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 const queryKeys = {
   trending: ["movies", "trending"] as const,
   popular: ["movies", "popular"] as const,
-  details: (imdbId: string) => ["movies", "details", imdbId] as const,
+  details: (imdbId?: string) =>
+    imdbId
+      ? (["movies", "details", imdbId] as const)
+      : (["movies", "details", "none"] as const),
 };
 
 export function useTrendingMoviesQuery() {
@@ -23,9 +26,7 @@ export function usePopularMoviesQuery() {
 
 export function useMovieDetailsQuery(imdbId?: string) {
   return useQuery<MovieDetail>({
-    queryKey: imdbId
-      ? queryKeys.details(imdbId)
-      : ["movies", "details", "none"],
+    queryKey: queryKeys.details(imdbId),
     queryFn: () => omdbService.getMovieDetails(imdbId as string),
     enabled: Boolean(imdbId),
   });

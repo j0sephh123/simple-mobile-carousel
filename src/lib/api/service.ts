@@ -8,10 +8,6 @@ const CONCURRENCY = 5;
 
 export class OMDBService {
   constructor(private apiKey: string) {
-    console.log("OMDBService constructor called with apiKey:", apiKey);
-    console.log("apiKey length:", apiKey?.length);
-    console.log("apiKey is empty:", !apiKey);
-
     if (!apiKey) {
       throw new Error(
         "OMDB API key is required. Please set EXPO_PUBLIC_OMDB_API_KEY in your environment."

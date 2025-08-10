@@ -1,9 +1,9 @@
 import React from "react";
 import { StyleSheet, ViewStyle } from "react-native";
 import { Colors } from "../../lib/theme/colors";
-import { IconSymbol } from "../icons/IconSymbol";
-import { ThemedText } from "../primitives/ThemedText";
-import { ThemedView } from "../primitives/ThemedView";
+import { IconSymbol } from "@/src/ui/icons/IconSymbol";
+import { ThemedText } from "@/src/ui/primitives/ThemedText";
+import { ThemedView } from "@/src/ui/primitives/ThemedView";
 
 type EmptyStateProps = {
   title?: string;

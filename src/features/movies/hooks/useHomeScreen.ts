@@ -1,10 +1,8 @@
 import { Movie } from "@/src/lib/api";
 import { useRouter } from "expo-router";
-import React from "react";
-import { isNetworkError } from "../../../lib/utils";
 import { usePopularMoviesQuery, useTrendingMoviesQuery } from "./useMovies";
-
-export type Status = "loading" | "offline" | "error" | "empty" | "success";
+import { useRefresh } from "../../../hooks/api/useRefresh";
+import { determineQueryStatus } from "@/src/hooks/api/useQueryStatus";
 
 export type HomeScreenData = {
   trending: Movie[];
@@ -13,7 +11,6 @@ export type HomeScreenData = {
 
 export function useHomeScreen() {
   const router = useRouter();
-  const [refreshing, setRefreshing] = React.useState(false);
 
   const {
     data: trendingMovies,
@@ -29,29 +26,18 @@ export function useHomeScreen() {
     refetch: refetchPopular,
   } = usePopularMoviesQuery();
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      await Promise.all([refetchTrending(), refetchPopular()]);
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  const { refreshing, handleRefresh } = useRefresh(async () => {
+    await Promise.all([refetchTrending(), refetchPopular()]);
+  });
 
   const handleMoviePress = (movie: Movie) => {
     router.push(`/(stack)/movie/${movie.imdbID}`);
   };
 
-  let status: Status;
-  if (trendingLoading || popularLoading) status = "loading";
-  else if (
-    (trendingError && isNetworkError(trendingError)) ||
-    (popularError && isNetworkError(popularError))
-  )
-    status = "offline";
-  else if (trendingError || popularError) status = "error";
-  else if (!trendingMovies?.length && !popularMovies?.length) status = "empty";
-  else status = "success";
+  const status = determineQueryStatus([
+    { isLoading: trendingLoading, error: trendingError, data: trendingMovies },
+    { isLoading: popularLoading, error: popularError, data: popularMovies },
+  ]);
 
   const data: HomeScreenData | undefined =
     status === "success"
