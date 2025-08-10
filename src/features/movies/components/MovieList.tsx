@@ -1,4 +1,4 @@
-import { MovieSummary } from "@/src/lib/api";
+import { MovieSummary } from "@/src/lib/api/types";
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
@@ -28,7 +28,7 @@ export const MovieList = ({
     <MovieCard movie={item} onPress={onMoviePress} size={size} />
   );
 
-  const keyExtractor = (item: MovieSummary) => `${item.Title}-${item.Year}`;
+  const keyExtractor = (item: MovieSummary) => item.imdbID;
 
   return (
     <ThemedView style={styles.container}>

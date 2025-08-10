@@ -1,7 +1,7 @@
 import { MovieSummary } from "@/src/lib/api/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { ThemedText } from "../../../ui/primitives/ThemedText";
 import { ThemedView } from "../../../ui/primitives/ThemedView";
+import { PlaceholderImage } from "./PlaceholderImage";
 
 const { width } = Dimensions.get("window");
 const HERO_HEIGHT = Math.min(520, Math.round(width * 1.1));
@@ -23,10 +24,7 @@ type Props = {
 export function HeroCarousel({ movies, onPress }: Props) {
   const listRef = useRef<FlatList<MovieSummary>>(null);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-  const data = useMemo(() => (movies || []).slice(0, 6), [movies]);
   const [currentMovie, setCurrentMovie] = useState<MovieSummary | null>(null);
-
-  if (!data.length) return null;
 
   const handleImageError = (imdbId: string) => {
     setImageErrors((prev) => new Set(prev).add(imdbId));
@@ -48,14 +46,7 @@ export function HeroCarousel({ movies, onPress }: Props) {
               onError={() => handleImageError(item.imdbID)}
             />
           ) : (
-            <View style={styles.fallbackBackground}>
-              <View style={styles.fallbackIcon}>
-                <ThemedText style={styles.fallbackIconText}>🎬</ThemedText>
-              </View>
-              <ThemedText style={styles.fallbackTitle} numberOfLines={2}>
-                {item.Title}
-              </ThemedText>
-            </View>
+            <PlaceholderImage movie={item} />
           )}
           <LinearGradient
             colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)"]}
@@ -82,10 +73,10 @@ export function HeroCarousel({ movies, onPress }: Props) {
     <View>
       <FlatList
         ref={listRef}
-        data={data}
+        data={movies}
         horizontal
         pagingEnabled
-        keyExtractor={(m) => `${m.Title}-${m.Year}`}
+        keyExtractor={({ imdbID }) => imdbID}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         snapToAlignment="center"
@@ -93,22 +84,20 @@ export function HeroCarousel({ movies, onPress }: Props) {
         contentContainerStyle={styles.listContent}
         onMomentumScrollEnd={(e) => {
           const index = Math.round(e.nativeEvent.contentOffset.x / width);
-          setCurrentMovie(data[index] || null);
+          setCurrentMovie(movies[index] || null);
         }}
       />
-      {!!data.length && (
-        <View style={styles.indicatorContainer} pointerEvents="none">
-          {data.map((movie) => (
-            <View
-              key={`${movie.Title}-${movie.Year}-indicator`}
-              style={[
-                styles.indicator,
-                { opacity: currentMovie?.imdbID === movie.imdbID ? 1 : 0.4 },
-              ]}
-            />
-          ))}
-        </View>
-      )}
+      <View style={styles.indicatorContainer} pointerEvents="none">
+        {movies.map(({ imdbID }) => (
+          <View
+            key={imdbID}
+            style={[
+              styles.indicator,
+              { opacity: currentMovie?.imdbID === imdbID ? 1 : 0.4 },
+            ]}
+          />
+        ))}
+      </View>
     </View>
   );
 }
@@ -125,27 +114,6 @@ const styles = StyleSheet.create({
   heroImage: {
     width: "100%",
     height: "100%",
-  },
-  fallbackBackground: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#2a2a2a",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 40,
-  },
-  fallbackIcon: {
-    marginBottom: 20,
-  },
-  fallbackIconText: {
-    fontSize: 48,
-  },
-  fallbackTitle: {
-    fontSize: 24,
-    fontFamily: "Inter-Bold",
-    color: "#ffffff",
-    textAlign: "center",
-    lineHeight: 28,
   },
   gradient: {
     position: "absolute",

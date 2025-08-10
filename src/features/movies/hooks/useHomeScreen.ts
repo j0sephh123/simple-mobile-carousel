@@ -55,9 +55,9 @@ export function useHomeScreen() {
   const data: HomeScreenData | undefined =
     status === "success"
       ? {
-          featured: (featuredMovies as MovieSummary[]) || [],
-          trending: (trendingMovies as MovieSummary[]) || [],
-          popular: (popularMovies as MovieSummary[]) || [],
+          featured: featuredMovies ?? [],
+          trending: trendingMovies ?? [],
+          popular: popularMovies ?? [],
         }
       : undefined;
 
